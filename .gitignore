@@ -1,0 +1,17 @@
+# Xcode
+xcuserdata/
+*.xcuserstate
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Generated project (recreate with: xcodegen generate)
+*.xcodeproj/
+
+# macOS
+.DS_Store
+
+# Swift Package Manager
+.build/
