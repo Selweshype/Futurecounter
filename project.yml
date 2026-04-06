@@ -1,0 +1,34 @@
+name: FutureCounter
+options:
+  bundleIdPrefix: com.yourname
+  deploymentTarget:
+    iOS: "16.0"
+  xcodeVersion: "15.0"
+targets:
+  FutureCounter:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - FutureCounter
+    settings:
+      base:
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SWIFT_VERSION: "5.0"
+        PRODUCT_BUNDLE_IDENTIFIER: com.yourname.FutureCounter
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        INFOPLIST_FILE: FutureCounter/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+  FutureCounterTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - FutureCounterTests
+    dependencies:
+      - target: FutureCounter
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.yourname.FutureCounterTests
