@@ -30,6 +30,44 @@ In the GitHub repo → **Settings** → **Pages** → Source: `Deploy from a bra
 
 ---
 
+## Apple Watch — Siri Shortcut (no Mac needed)
+
+Apple Watch has no web browser, so the web app can't run on it directly. The solution is a **Siri Shortcut** — build it once on your iPhone, and it syncs to your Watch automatically.
+
+### Build the shortcut (takes ~2 minutes)
+
+1. Open the **Shortcuts** app on your iPhone
+2. Tap **+** (top right) to create a new shortcut
+3. Tap the shortcut name at the top → rename it **FutureTime**
+4. Add these actions in order:
+
+   **Action 1 — Choose from list**
+   - Search for: `Choose from List`
+   - Tap the list field → type each number: `1`, `2`, `3` … up to `23`
+   - Set the prompt to: `In how many hours?`
+
+   **Action 2 — Adjust date**
+   - Search for: `Adjust Date`
+   - Set to: Add → `Chosen Item` hours → to `Current Date`
+
+   **Action 3 — Format date**
+   - Search for: `Format Date`
+   - Date: `Adjusted Date` · Format: `Custom` · Enter: `HH:mm`
+
+   **Action 4 — Show result**
+   - Search for: `Show Result`
+   - Input: `Formatted Date`
+
+5. Tap **Done** — the shortcut is saved
+
+### Use it on Apple Watch
+
+- Open the **Shortcuts app** on your Watch → tap **FutureTime**
+- Or say **"Hey Siri, FutureTime"** from your wrist
+- Or add it to your Watch face: edit face → Complications → pick **Shortcuts** → select **FutureTime** — then one tap on your Watch face runs it
+
+---
+
 ## Mac — Xcode
 
 ```bash

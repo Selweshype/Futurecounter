@@ -12,6 +12,49 @@
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+    /* ── Responsive tokens ─────────────────────────────────── */
+    :root {
+      --gap:      32px;
+      --picker-w: 210px;
+      --picker-h: 148px;
+      --label-sz: 11px;
+      --item-sz:  34px;
+      --item-h:   40px;
+      --spacer-h: 50px;
+    }
+    /* iPhone 15 / regular */
+    @media (min-width: 390px) {
+      :root {
+        --gap:      40px;
+        --picker-w: 220px;
+        --picker-h: 154px;
+        --label-sz: 12px;
+        --item-sz:  38px;
+        --item-h:   44px;
+        --spacer-h: 55px;
+      }
+    }
+    /* iPad */
+    @media (min-width: 768px) {
+      :root {
+        --gap:      60px;
+        --picker-w: 300px;
+        --picker-h: 180px;
+        --label-sz: 14px;
+        --item-sz:  46px;
+        --item-h:   54px;
+        --spacer-h: 65px;
+      }
+    }
+    /* iPad Pro */
+    @media (min-width: 1024px) {
+      :root {
+        --gap:      80px;
+        --picker-w: 340px;
+        --label-sz: 15px;
+      }
+    }
+
     body {
       background: #000;
       color: #fff;
@@ -30,15 +73,15 @@
 
     .label {
       color: rgba(255, 255, 255, 0.45);
-      font-size: 12px;
+      font-size: var(--label-sz);
       font-weight: 400;
-      letter-spacing: 3px;
+      letter-spacing: clamp(2px, 0.4vw, 4px);
       text-transform: uppercase;
       margin-bottom: 6px;
     }
 
     .time-display {
-      font-size: clamp(64px, 18vw, 88px);
+      font-size: clamp(60px, 16vw, 96px);
       font-weight: 100;
       font-variant-numeric: tabular-nums;
       letter-spacing: -2px;
@@ -46,40 +89,40 @@
     }
 
     #currentTime { color: #ffffff; }
-    #futureTime  { color: #ff9500; font-size: clamp(80px, 22vw, 108px); }
+    #futureTime  {
+      color: #ff9500;
+      font-size: clamp(76px, 20vw, 120px);
+    }
 
-    .gap { height: 48px; }
-    .gap-sm { height: 16px; }
+    .gap { height: var(--gap); }
 
-    /* ── Wheel picker ── */
+    /* ── Wheel picker ────────────────────────────────────────── */
     .picker-wrap {
       position: relative;
-      width: 220px;
-      height: 154px;
+      width: var(--picker-w);
+      height: var(--picker-h);
       overflow: hidden;
     }
 
-    /* fade top & bottom */
     .picker-wrap::before,
     .picker-wrap::after {
       content: '';
       position: absolute;
       left: 0; right: 0;
-      height: 55px;
+      height: var(--spacer-h);
       z-index: 2;
       pointer-events: none;
     }
     .picker-wrap::before { top: 0;    background: linear-gradient(to bottom, #000 0%, transparent 100%); }
     .picker-wrap::after  { bottom: 0; background: linear-gradient(to top,    #000 0%, transparent 100%); }
 
-    /* selection band */
     .picker-highlight {
       position: absolute;
       top: 50%; left: 0; right: 0;
-      height: 44px;
+      height: var(--item-h);
       transform: translateY(-50%);
-      border-top:    1px solid rgba(255,255,255,0.18);
-      border-bottom: 1px solid rgba(255,255,255,0.18);
+      border-top:    1px solid rgba(255, 255, 255, 0.18);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.18);
       z-index: 1;
       pointer-events: none;
     }
@@ -94,19 +137,21 @@
     .picker-scroll::-webkit-scrollbar { display: none; }
 
     .picker-item {
-      height: 44px;
+      height: var(--item-h);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 38px;
+      font-size: var(--item-sz);
       font-weight: 300;
       font-variant-numeric: tabular-nums;
       scroll-snap-align: center;
       color: #fff;
     }
 
-    /* spacers so first/last item can reach centre */
-    .picker-spacer { height: 55px; flex-shrink: 0; }
+    .picker-spacer {
+      height: var(--spacer-h);
+      flex-shrink: 0;
+    }
   </style>
 </head>
 <body>
@@ -128,17 +173,22 @@
   <p class="time-display" id="futureTime">--:--</p>
 
   <script>
-    // ── Helpers ─────────────────────────────────────────────
+    // ── Helpers ──────────────────────────────────────────────
     function fmt(date) {
-      const h = String(date.getHours()).padStart(2, '0');
-      const m = String(date.getMinutes()).padStart(2, '0');
-      return h + ':' + m;
+      return String(date.getHours()).padStart(2, '0') + ':' +
+             String(date.getMinutes()).padStart(2, '0');
     }
 
-    // ── State ────────────────────────────────────────────────
+    // Read --item-h from CSS so snap math is correct at every breakpoint
+    function itemHeight() {
+      return parseFloat(getComputedStyle(document.documentElement)
+        .getPropertyValue('--item-h')) || 44;
+    }
+
+    // ── State ─────────────────────────────────────────────────
     let selectedHours = 1;
 
-    // ── Clock ────────────────────────────────────────────────
+    // ── Clock ─────────────────────────────────────────────────
     function tick() {
       const now = new Date();
       document.getElementById('currentTime').textContent = fmt(now);
@@ -146,14 +196,12 @@
       document.getElementById('futureTime').textContent = fmt(future);
     }
     tick();
-    setInterval(tick, 10_000);   // refresh every 10 s
+    setInterval(tick, 10_000);
 
-    // ── Picker ───────────────────────────────────────────────
-    const ITEM_H   = 44;
-    const HOURS    = 23;
-    const scroll   = document.getElementById('pickerScroll');
+    // ── Picker ────────────────────────────────────────────────
+    const HOURS  = 23;
+    const scroll = document.getElementById('pickerScroll');
 
-    // top spacer
     const topSpacer = document.createElement('div');
     topSpacer.className = 'picker-spacer';
     scroll.appendChild(topSpacer);
@@ -165,24 +213,29 @@
       scroll.appendChild(el);
     }
 
-    // bottom spacer
     const botSpacer = document.createElement('div');
     botSpacer.className = 'picker-spacer';
     scroll.appendChild(botSpacer);
 
-    // scroll to item 1 (index 0)
     requestAnimationFrame(() => { scroll.scrollTop = 0; });
 
     let scrollTimer;
     scroll.addEventListener('scroll', () => {
       clearTimeout(scrollTimer);
       scrollTimer = setTimeout(() => {
-        const index = Math.round(scroll.scrollTop / ITEM_H);
+        const IH = itemHeight();
+        const index = Math.round(scroll.scrollTop / IH);
         selectedHours = Math.min(Math.max(index + 1, 1), HOURS);
-        // snap cleanly
-        scroll.scrollTo({ top: index * ITEM_H, behavior: 'smooth' });
+        scroll.scrollTo({ top: index * IH, behavior: 'smooth' });
         tick();
       }, 80);
+    });
+
+    // Re-snap on resize (orientation change, split-view resize on iPad)
+    window.addEventListener('resize', () => {
+      const IH = itemHeight();
+      const index = selectedHours - 1;
+      scroll.scrollTo({ top: index * IH, behavior: 'instant' });
     });
   </script>
 </body>
